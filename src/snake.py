@@ -18,7 +18,7 @@ class Game:
         self.snake_size = 3
         self.window_title = "Snake Game"
         self.score = 0
-        self.fps = 10
+        self.fps = 13
         self.clock = None
         self.direction = DIRECTION.RIGHT
 
@@ -132,7 +132,6 @@ class Game:
     def __move_snake(self, direction: Tuple[int, int]):
         """ moves the snake in the given direction """
         x,y = np.argwhere(self.board == self.snake_size)[0]
-        self.board[x,y] = self.snake_size
         
         shift_x, shift_y = direction.value
         new_x = x + shift_x
@@ -141,11 +140,11 @@ class Game:
         shifted_x = new_x
         shifted_y = new_y
 
-        if self.board[shifted_x, shifted_y] == TILE.WALL:
+        grow = True if self.board[shifted_x, shifted_y] == TILE.FRUIT else False
+
+        if not grow and self.board[shifted_x, shifted_y] != TILE.EMPTY:
             self.running = False
             return
-
-        grow = True if self.board[shifted_x, shifted_y] == TILE.FRUIT else False
 
         if not grow:
             for i in range(self.snake_size, 0, -1):
