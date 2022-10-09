@@ -18,7 +18,7 @@ class Game:
         self.snake_size = 3
         self.window_title = "Snake Game"
         self.score = 0
-        self.fps = 13
+        self.fps = 10
         self.clock = None
         self.direction = DIRECTION.RIGHT
 
@@ -157,5 +157,6 @@ class Game:
         else:
             self.snake_size += 1
             self.score += 1
+            self.fps = min(10 + int(self.snake_size/3), 22)
             self.board[shifted_x, shifted_y] = self.snake_size
             self.__add_food()
