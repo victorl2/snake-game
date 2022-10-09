@@ -4,6 +4,7 @@ from typing import Sequence, Tuple
 import logging as log
 import numpy as np
 import pygame
+import sys
 
 class Game:
     def __init__(self, board_size=32, headless=False):
@@ -14,7 +15,7 @@ class Game:
         self.screen = None
         self.board_size = board_size
         self.board = np.zeros((board_size, board_size), dtype=np.int8)
-        self.snake_size = 1
+        self.snake_size = 3
         self.window_title = "Snake Game"
         self.score = 0
         self.fps = 10
@@ -27,7 +28,9 @@ class Game:
         self.board[board_size - 1, :] = TILE.WALL
         self.board[:, board_size - 1] = TILE.WALL
 
-        self.board[6, board_size // 2] = 1  # add snake on the board
+        self.board[6, board_size // 2] = 3  # add snake on the board
+        self.board[5, board_size // 2] = 2
+        self.board[4, board_size // 2] = 1
         self.__add_food()
 
         self.grid_step = self.width // self.board_size
@@ -58,6 +61,7 @@ class Game:
     def __handle_event(self, event: pygame.event.Event):
         if event.type == pygame.QUIT:
             self.running = False
+            sys.exit()
 
     def __draw(self):
         if self.headless:
@@ -75,11 +79,19 @@ class Game:
                 y_pos = self.grid_step * y
 
                 tile = self.board[x, y]
-                tile_color = tile_to_color(tile)
+                tile_color = self.__snake_color(x,y) if is_snake(tile) else tile_to_color(tile)
                 
                 flip_background_color()
                 pygame.draw.rect(self.screen, tile_color, [x_pos, y_pos, self.grid_step, self.grid_step])
     
+    def __snake_color(self, x, y):
+        if self.board[x, y] == 1:
+            return COLOR.BLUE_ONE
+        elif self.board[x, y] == self.snake_size:
+            return COLOR.BLUE_LAST
+        else:
+            return (10, 126, 146)
+
     def __draw_score(self):
         font = pygame.font.Font(None, 30)
         text = font.render("score: " + str(self.score), 1, COLOR.WHITE)
@@ -147,5 +159,3 @@ class Game:
             self.score += 1
             self.board[shifted_x, shifted_y] = self.snake_size
             self.__add_food()
-
-        

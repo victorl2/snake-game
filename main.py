@@ -5,5 +5,7 @@ if __name__ == "__main__":
     print("######## SnakeGame ########", end="\n")
     
     import src.snake as snake
-    snake_game = snake.Game()
-    snake_game.run()
+
+    while True:
+        snake_game = snake.Game()
+        snake_game.run()
