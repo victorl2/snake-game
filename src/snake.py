@@ -144,6 +144,7 @@ class Game:
 
         if not grow and self.board[shifted_x, shifted_y] != TILE.EMPTY:
             self.running = False
+            log.info("game over, your score was %s", self.score)
             return
 
         if not grow:
