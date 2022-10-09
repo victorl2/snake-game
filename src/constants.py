@@ -2,9 +2,6 @@ from enum import Enum
 
 class COLOR:
     BLUE = (8,115,229)
-    LIGHT_BLUE = (56, 212, 218)
-    LIGHT_GREY = (200, 200, 200)
-    BLACK  = (0, 0, 0)
     WHITE = (255, 255, 255)
     RED = (255, 0, 0)
     DARKER_GREEN = (74,117,45)
@@ -16,6 +13,12 @@ class TILE:
     EMPTY = 0
     FRUIT = -1
     WALL = -2
+
+class DIRECTION(Enum):
+    LEFT = (-1, 0)
+    RIGHT = (1, 0)
+    UP = (0, -1)
+    DOWN = (0, 1)
 
 dark = True
 

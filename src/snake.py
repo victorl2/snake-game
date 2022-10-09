@@ -1,5 +1,5 @@
 import src.logger as logger
-from src.constants import TILE, COLOR, tile_to_color, flip_background_color
+from src.constants import TILE, COLOR, tile_to_color, flip_background_color, DIRECTION, is_snake
 from typing import Sequence, Tuple
 import logging as log
 import numpy as np
@@ -19,6 +19,7 @@ class Game:
         self.score = 0
         self.fps = 10
         self.clock = None
+        self.direction = DIRECTION.RIGHT
 
         # make the walls
         self.board[0, :] = TILE.WALL
@@ -39,19 +40,20 @@ class Game:
                 self.__handle_event(event)
             self.__draw()
             self.__handle_input()
+            self.__move_snake(self.direction)
         pygame.quit()
 
     def __handle_input(self):
         pressed_keys = pygame.key.get_pressed()
         """ handle user input """
-        if pressed_keys[pygame.K_LEFT]:
-            self.__move_snake((-1, 0))
-        elif pressed_keys[pygame.K_RIGHT]:
-            self.__move_snake((1, 0))
-        elif pressed_keys[pygame.K_UP]:
-            self.__move_snake((0, -1))
-        elif pressed_keys[pygame.K_DOWN]:
-            self.__move_snake((0, 1))
+        if pressed_keys[pygame.K_LEFT] and self.direction != DIRECTION.RIGHT:
+            self.direction = DIRECTION.LEFT
+        elif pressed_keys[pygame.K_RIGHT] and self.direction != DIRECTION.LEFT:
+            self.direction = DIRECTION.RIGHT
+        elif pressed_keys[pygame.K_UP] and self.direction != DIRECTION.DOWN:
+            self.direction = DIRECTION.UP
+        elif pressed_keys[pygame.K_DOWN] and self.direction != DIRECTION.UP:
+            self.direction = DIRECTION.DOWN
 
     def __handle_event(self, event: pygame.event.Event):
         if event.type == pygame.QUIT:
@@ -72,7 +74,9 @@ class Game:
                 x_pos = self.grid_step * x
                 y_pos = self.grid_step * y
 
-                tile_color = tile_to_color(self.board[x, y])
+                tile = self.board[x, y]
+                tile_color = tile_to_color(tile)
+                
                 flip_background_color()
                 pygame.draw.rect(self.screen, tile_color, [x_pos, y_pos, self.grid_step, self.grid_step])
     
@@ -115,22 +119,33 @@ class Game:
     
     def __move_snake(self, direction: Tuple[int, int]):
         """ moves the snake in the given direction """
-        head_x, head_y = np.argwhere(self.board == 1)[0]
-        self.board[head_x, head_y] = 0
-        x,y = head_x + direction[0], head_y + direction[1]
-        self.__process_board(x,y)
-        self.board[x, y] = 1
-    
-    def __handle_snake_growth(self):
-        """ add a snake_size +1 to the board representing the new snake body"""
-        pass
+        x,y = np.argwhere(self.board == self.snake_size)[0]
+        self.board[x,y] = self.snake_size
+        
+        shift_x, shift_y = direction.value
+        new_x = x + shift_x
+        new_y = y + shift_y
 
-    
-    def __process_board(self, x, y):
-        """ processes the board and checks for collisions and food """
-        if self.board[x, y] == TILE.FRUIT:
-            self.__add_food()
-            self.__add_wall()
-            self.score += 1
-        elif self.board[x, y] == TILE.WALL:
+        shifted_x = new_x
+        shifted_y = new_y
+
+        if self.board[shifted_x, shifted_y] == TILE.WALL:
             self.running = False
+            return
+
+        grow = True if self.board[shifted_x, shifted_y] == TILE.FRUIT else False
+
+        if not grow:
+            for i in range(self.snake_size, 0, -1):
+                x, y = np.argwhere(self.board == i)[0]
+                self.board[new_x, new_y] = i
+                self.board[x,y] = TILE.EMPTY
+                new_x = x
+                new_y = y
+        else:
+            self.snake_size += 1
+            self.score += 1
+            self.board[shifted_x, shifted_y] = self.snake_size
+            self.__add_food()
+
+        
