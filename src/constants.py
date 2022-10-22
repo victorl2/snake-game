@@ -8,7 +8,6 @@ class COLOR:
     DARK_GREEN = (87,138,53)
     MEDIUM_GREEN = (162,208,74)
     LIGHT_GREEN = (171,214,83)
-
     BLUE_ONE = (10, 126, 246)
     BLUE_LAST = (8, 38, 69)
 
