@@ -49,13 +49,13 @@ class Game:
     def __handle_input(self):
         pressed_keys = pygame.key.get_pressed()
         """ handle user input """
-        if pressed_keys[pygame.K_LEFT] and self.direction != DIRECTION.RIGHT:
+        if (pressed_keys[pygame.K_LEFT] or pressed_keys[pygame.K_a]) and self.direction != DIRECTION.RIGHT:
             self.direction = DIRECTION.LEFT
-        elif pressed_keys[pygame.K_RIGHT] and self.direction != DIRECTION.LEFT:
+        elif (pressed_keys[pygame.K_RIGHT] or pressed_keys[pygame.K_d]) and self.direction != DIRECTION.LEFT:
             self.direction = DIRECTION.RIGHT
-        elif pressed_keys[pygame.K_UP] and self.direction != DIRECTION.DOWN:
+        elif (pressed_keys[pygame.K_UP] or pressed_keys[pygame.K_w]) and self.direction != DIRECTION.DOWN:
             self.direction = DIRECTION.UP
-        elif pressed_keys[pygame.K_DOWN] and self.direction != DIRECTION.UP:
+        elif (pressed_keys[pygame.K_DOWN] or pressed_keys[pygame.K_s])and self.direction != DIRECTION.UP:
             self.direction = DIRECTION.DOWN
 
     def __handle_event(self, event: pygame.event.Event):
