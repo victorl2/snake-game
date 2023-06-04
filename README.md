@@ -1,5 +1,5 @@
-# SnakeAI
-Reinforcement learning implementation that play's the game of snake
+# SnakeGame
+A simple implementation of a snake game in python
 
 
 ## Requirements
